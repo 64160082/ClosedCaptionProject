@@ -1,7 +1,8 @@
+
 # Closed Caption Project
 
- 1. Install whisper
- 2. Sentence recognition
+ 1. [Install whisper](install-whisper)
+ 2. [Sentence recognition](sentence-recognition)
 
 ## Install whisper
     !pip install git+https://github.com/openai/whisper.git
@@ -9,3 +10,4 @@
 
 ## Sentence recognition
     !whisper "audio_name.wav" --model medium.en --word_timestamps True --highlight_words True
+
