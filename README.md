@@ -1,5 +1,5 @@
 
-# Closed Caption Project
+# Closed Captioning Project
 
  1. Install whisper
  2. Sentence recognition
