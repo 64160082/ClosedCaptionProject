@@ -1,8 +1,8 @@
 
 # Closed Caption Project
 
- 1. [Install whisper](install-whisper)
- 2. [Sentence recognition](sentence-recognition)
+ 1. Install whisper
+ 2. Sentence recognition
 
 ## Install whisper
     !pip install git+https://github.com/openai/whisper.git
