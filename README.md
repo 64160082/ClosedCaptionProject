@@ -21,7 +21,7 @@ This repository contains a Python implementation for recognizing sentences from 
 
 You can install the required dependencies using `pip`. It is recommended to use a virtual environment to manage dependencies.
 
-    pip install numpy soundfile nltk parselmouth pydub librosa
+    pip install numpy soundfile nltk parselmouth pydub librosa torch
 
 ### Whisper Installation
 
