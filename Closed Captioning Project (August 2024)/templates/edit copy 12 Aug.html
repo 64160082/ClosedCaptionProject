@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit VTT File</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+        }
+
+        .editable-div {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 100%;
+            height: 500px;
+            overflow-y: scroll;
+            white-space: pre-wrap; /* Preserve whitespace */
+            text-align: left; /* Align text to the left */
+            outline: none; /* Remove focus outline */
+        }
+
+        .toolbar {
+            margin-bottom: 10px;
+        }
+
+        .toolbar button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Include the navigation section -->
+        {% include 'nav.html' %}
+
+        <div>
+            <h1>Edit Your Closed Caption File</h1>
+            <p style="font-size: larger">Edit the VTT content below:</p>
+        </div>
+
+        <!-- Toolbar for undo/redo -->
+        <div class="toolbar">
+            <button onclick="document.execCommand('undo')">Undo</button>
+            <button onclick="document.execCommand('redo')">Redo</button>
+            <button onclick="applyBold()">Bold</button>
+            <button onclick="applyUppercase()">Uppercase</button>
+            <button onclick="applyUnderline()">Underline</button>
+        </div>
+
+        <!-- Display formatted content -->
+        <div id="formatted-content" class="editable-div" contenteditable="true">{{ vtt_content | safe }}</div>
+
+        <!-- Hidden textarea for raw content -->
+        <textarea id="raw-content" style="display: none;">{{ vtt_content }}</textarea>
+
+        <!-- Button to trigger VTT download -->
+        <div>
+            <button id="saveAndDownloadButton" onclick="saveAndDownload()">
+                Save and Download VTT File
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("formatted-content").addEventListener("input", function() {
+            document.getElementById("raw-content").value = this.innerHTML;
+        });
+
+        function saveAndDownload() {
+            var rawContent = document.getElementById("raw-content").value;
+
+            fetch(`/save_vtt/{{ audio_id }}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ content: rawContent }),
+            })
+            .then((response) => {
+                if (response.ok) {
+                    alert("VTT content saved successfully.");
+                    window.location.href = `/download_vtt/{{ audio_id }}`; // Redirect to download VTT
+                } else {
+                    console.error("Failed to save VTT file.");
+                    alert("Failed to save VTT file. Please try again.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
+        }
+
+        function applyBold() {
+            document.execCommand('bold');
+        }
+
+        function applyUppercase() {
+            document.execCommand('formatBlock', false, 'p');
+            let selectedText = window.getSelection().toString();
+            if (selectedText) {
+                document.execCommand('insertHTML', false, `<span style="text-transform: uppercase;">${selectedText}</span>`);
+            }
+        }
+
+        function applyUnderline() {
+            document.execCommand('underline');
+        }
+    </script>
+</body>
+</html>
