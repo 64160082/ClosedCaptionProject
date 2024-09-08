@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CC Stress</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <style>
+        /* iOS-like progress bar container */
+        #progressBarContainer {
+            display: none;
+            /* Initially hidden */
+            width: 25%;
+            /* Smaller width */
+            background-color: #e0e0e0;
+            /* Light gray background, similar to iOS */
+            border-radius: 10px;
+            /* More rounded corners */
+            height: 1px;
+            /* Smaller height */
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            overflow: hidden;
+            /* Ensure the blue bar doesn't overflow */
+            position: relative;
+            /* For proper placement of progress bar */
+            font-size: 14px;
+        }
+
+        /* iOS-like progress bar */
+        #progressBar {
+            font-size: 12px;
+            width: 0%;
+            height: 1px;
+            /* Fill the container height */
+            background-color: #007aff;
+            /* iOS blue color */
+            border-radius: 10px;
+            /* Match the container's rounded corners */
+            transition: width 0.2s ease;
+            /* Smooth transition effect */
+            position: absolute;
+            /* Position inside the container */
+            left: 0;
+            /* Ensure it starts from the left */
+            top: 0;
+            /* Ensure it aligns with the top */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Include the navigation section -->
+    {% include 'nav.html' %}
+
+    <div>
+        <h1 class="header">Closed Caption <br> with stressed syllables</h1>
+        <p class="description">
+            An online audio transcription engine that generates <br> closed caption files with stressed syllables
+            highlighted.
+        </p>
+
+        <!-- Display error message, if any -->
+        {% if session.get('message') %}
+        <div class="alert alert-danger" role="alert">
+            {{ session['message'] }}
+        </div>
+        {% endif %}
+        <!-- Clear session message after displaying -->
+        {% set _ = session.pop('message', None) %}
+
+        <!-- File upload form (initially hidden) -->
+        <form id="uploadForm" method="POST" enctype="multipart/form-data" action="{{ url_for('upload') }}">
+            {{ form.hidden_tag() }}
+            <input type="file" name="file" id="fileInput" style="display: none;"> <!-- Hidden input for file upload -->
+        </form>
+
+        <button id="selectFileButton">Upload audio file</button>
+
+        <!-- Progress bar container -->
+        <div id="progressBarContainer">
+            <div id="progressBar">Uploading...</div>
+        </div>
+
+        <script>
+            document.getElementById("selectFileButton").addEventListener("click", function () {
+                console.log("Button clicked"); // To verify the click is detected
+                document.getElementById("fileInput").click(); // Show the file dialog
+            });
+
+            // Submit the form and show progress bar when a file is selected
+            document.getElementById("fileInput").addEventListener("change", function () {
+                console.log("File selected"); // To verify the change event
+
+                // Show the progress bar
+                document.getElementById("progressBarContainer").style.display = "block";
+
+                // Speed settings for 5 minutes duration
+                let updateInterval = 3000; // Time between updates in milliseconds (3000ms = 3 seconds)
+                let incrementValue = 1;    // Percentage increment per update (1% each time)
+
+                let progressBar = document.getElementById("progressBar");
+                let width = 0;
+                let interval = setInterval(function () {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                    } else {
+                        width += incrementValue;
+                        progressBar.style.width = width + '%';
+                    }
+                }, updateInterval);
+
+                document.getElementById("uploadForm").submit(); // Submit the form on file selection
+            });
+        </script>
+    </div>
+</body>
+
+</html>
